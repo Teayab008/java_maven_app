@@ -7,18 +7,24 @@ pipeline {
 
     stages {
 
-        stage("Build Jar") { 
+        stage("test") { 
             steps {
-                echo "Building the application..."
-                sh "mvn clean package"
+                echo "testing the application from branch $BRANCH_NAME"
             }
         }
-
-        stage("Build & Push Docker Image") {
+    
+        stage("building") {
+            when{
+                expression {
+                    BRANCH_NAME == "main"
+                }
+            }
             steps {
-                echo "Building the Docker image..."
+                    
+                echo "Building the application.."
+                
 
-                sh "docker build -t tayyab001/java_app:jma2.0 ."
+              /*  sh "docker build -t tayyab001/java_app:jma2.0 ."
 
                 withCredentials([
                     usernamePassword(
@@ -30,10 +36,15 @@ pipeline {
                     sh 'echo $PASS | docker login -u $USER --password-stdin'
                     sh 'docker push tayyab001/java_app:jma2.0'
                 }
-            }
+            } */
         }
 
         stage("Deploy") {
+            when {
+                expression{
+                    BRANCH_NAME == "main"
+                }
+            }
             steps {
                 echo "Deploying the application..."
             }
