@@ -1,53 +1,41 @@
+def gv
+
 pipeline {   
-    agent any 
-
-    /* tools {
-        maven 'maven'
-    } */
-
-    stages {
-
-        stage("test") { 
-            steps {
-                echo "testing the application from branch ${env.BRANCH_NAME}"
-            }
-        }
-    
-        stage("building") {
-            when {
-                expression {
-                    env.BRANCH_NAME == "main"
-                }
-            }
-            steps {
-                echo "Building the application.."
-
-                /*
-                sh "docker build -t tayyab001/java_app:jma2.0 ."
-
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'docker-hub',
-                        usernameVariable: 'USER',
-                        passwordVariable: 'PASS'
-                    )
-                ]) {
-                    sh 'echo $PASS | docker login -u $USER --password-stdin'
-                    sh 'docker push tayyab001/java_app:jma2.0'
-                }
-                */
-            }
-        }
-
-        stage("Deploy") {
-            when {
-                expression {
-                    env.BRANCH_NAME == "main"
-                }
-            }
-            steps {
-                echo "Deploying the application..."
-            }
-        }
+    agent any
+    tools {
+        maven 'Maven'
     }
-}
+    stages {
+        stage("init") {
+            steps {
+                script {
+                    gv = load "script.groovy"
+                }
+            }
+        }
+        stage("build jar") {
+            steps {
+                script {
+                    gv.buildJar()
+
+                }
+            }
+        }
+
+        stage("build image") {
+            steps {
+                script {
+                    gv.buildImage()
+                }
+            }
+        }
+
+        stage("deploy") {
+            steps {
+                script {
+                    gv.deployApp()
+                }
+            }
+        }               
+    }
+} 
