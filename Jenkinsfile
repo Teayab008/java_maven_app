@@ -2,8 +2,12 @@
 @Library('jenkins_shared_libraries')_
 def gv
 
+
 pipeline {   
     agent any
+    tools{
+        maven 'maven'
+    }
     stages {
         stage("init") {
             steps {
