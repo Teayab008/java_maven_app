@@ -38,6 +38,4 @@ jobs:
       # Step 6: Push to target repo using PAT
       - name: Push to target repo
         run: |
-          git add .
-          git commit -m "Update from source repo" || echo "No changes to commit"
           git push https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/Teayab008/testing_githubaction.git main
