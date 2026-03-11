@@ -1,31 +1,27 @@
-name: Docker Image CI
+name: Push to Another Repo
+
 on:
- push:
-  branches:
-   - main
- pull_request:
-   branches:
-     - main
+  push:
+    branches:
+      - main  # trigger on pushes to main
 
 jobs:
- build:
-  runs-on: ubuntu-latest
+  push-to-another-repo:
+    runs-on: ubuntu-latest
 
-  steps:
-   - name: Checkout repository
-     uses: actions/checkout@v4
+    steps:
+      - name: Checkout source repo
+        uses: actions/checkout@v4
 
-   - name: Setup Java
-     uses: actions/setup-java@v4
-     with:
-       distribution: temurin
-       java-version: '8'
+      - name: Configure git
+        run: |
+          git config user.name "Tayyab008"
+          git config user.email "fa22-bee-043@cuilahore.edu.pk"
 
-   - name: Install Maven
-     run: sudo apt-get update && sudo apt-get install -y maven
-
-   - name: Build application
-     run: mvn clean package
-
-   - name: Build Docker image
-     run: docker build -f Dockerfile -t my-image-name:latest .
+      - name: Push to target repo
+        run: |
+          # Add the target repo as a remote
+          git remote add target https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/Teayab008/testing_githubaction
+          
+          # Push the main branch
+          git push target main
