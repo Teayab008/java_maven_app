@@ -2,28 +2,33 @@ name: Docker Image CI
 
 on:
 push:
-branches: [ "main" ]
+branches:
+- main
 pull_request:
-branches: [ "main" ]
+branches:
+- main
 
 jobs:
 build:
-
 runs-on: ubuntu-latest
+
 
 steps:
   - name: Checkout repository
     uses: actions/checkout@v4
 
-  - name: Set up Java
+  - name: Setup Java
     uses: actions/setup-java@v4
     with:
-      distribution: 'temurin'
+      distribution: temurin
       java-version: '8'
 
-  - name: Build JAR with Maven
+  - name: Install Maven
+    run: sudo apt-get update && sudo apt-get install -y maven
+
+  - name: Build application
     run: mvn clean package
 
   - name: Build Docker image
-    run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-```
+    run: docker build -f Dockerfile -t my-image-name:latest .
+
