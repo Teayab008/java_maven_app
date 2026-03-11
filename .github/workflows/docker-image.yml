@@ -1,5 +1,4 @@
 name: Docker Image CI
-
 on:
 push:
 branches:
@@ -11,7 +10,6 @@ branches:
 jobs:
 build:
 runs-on: ubuntu-latest
-
 
 steps:
   - name: Checkout repository
@@ -31,4 +29,3 @@ steps:
 
   - name: Build Docker image
     run: docker build -f Dockerfile -t my-image-name:latest .
-
