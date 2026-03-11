@@ -1,28 +1,43 @@
-name: Push to Another Repo
+name: Build and Push Java Project
 
 on:
   push:
     branches:
-      - main  # trigger on pushes to main
+      - main  # triggers when you push to main
 
 jobs:
-  push-to-another-repo:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout source repo
       - name: Checkout source repo
         uses: actions/checkout@v4
 
+      # Step 2: Set up Java
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+
+      # Step 3: Install Maven
+      - name: Install Maven
+        run: sudo apt-get update && sudo apt-get install -y maven
+
+      # Step 4: Build Maven project
+      - name: Build application
+        run: mvn clean package
+
+      # Step 5: Configure git
       - name: Configure git
         run: |
           git config user.name "Tayyab008"
           git config user.email "fa22-bee-043@cuilahore.edu.pk"
 
+      # Step 6: Push to target repo using PAT
       - name: Push to target repo
         run: |
-          # Add the target repo as a remote
-          git remote add target https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/Teayab008/testing_githubaction.git
-
-          
-          # Push the main branch
-          git push target main
+          git add .
+          git commit -m "Update from source repo" || echo "No changes to commit"
+          git push https://x-access-token:${{ secrets.TARGET_REPO_PAT }}@github.com/Teayab008/testing_githubaction.git main
